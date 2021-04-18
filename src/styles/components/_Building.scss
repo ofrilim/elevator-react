@@ -1,0 +1,25 @@
+.building {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.form {
+  font-size: 0.9rem;
+  background-color: $white;
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  input {
+    border: 1px solid $grey;
+    padding: 0.4rem;
+    width: 3rem;
+    margin: 5px;
+  }
+  button {
+    background-color: $grey;
+    padding: 0.5rem;
+  }
+}

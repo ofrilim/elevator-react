@@ -1,0 +1,16 @@
+@import 'setup/variables';
+
+// base
+@import 'basic/reset';
+@import 'basic/base';
+@import 'basic/helpers';
+
+
+// components
+@import 'components/Elevator.scss';
+@import 'components/Floor.scss';
+@import 'components/Building.scss';
+
+// pages
+@import 'pages/App';
+

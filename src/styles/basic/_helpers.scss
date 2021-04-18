@@ -1,0 +1,44 @@
+
+/*--- BASICS: ---*/
+.bold { font-weight: bold; }
+
+.pointer { cursor: pointer; }
+
+.center { text-align: center; }
+
+.m-auto { margin: 0 auto; }
+
+.capitalize { text-transform: capitalize; }
+
+
+/*--- BORDER: ---*/
+.border-radius { border-radius: 0.25rem; }
+
+/*--- flex helpers ---*/
+.flex { display: flex; }
+
+.flex-between { justify-content: space-between; }
+
+.flex-around { justify-content: space-around; }
+
+.flex-evenly { justify-content: space-evenly; }
+
+.flex-col { flex-direction: column; }
+
+.flex-row { flex-direction: row; }
+
+.justify-center { justify-content: center; }
+
+.align-center { align-items: center; }
+
+.align-start { align-items: start; }
+
+.align-end { align-items: end; }
+
+.flex-wrap { flex-wrap: wrap; }
+
+/*--- grid helpers ---*/
+.grid { display: grid; }
+
+
+

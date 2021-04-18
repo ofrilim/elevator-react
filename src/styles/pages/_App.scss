@@ -1,0 +1,13 @@
+
+.App {
+  background-color: $grey;
+  min-height: 100vh;
+  padding: 2rem 0;
+  .App-header {
+    h1 {
+      font-size: calc(10px + 2vmin);
+      padding-bottom: 3rem;
+    }
+  }
+}
+
