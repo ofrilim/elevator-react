@@ -9,7 +9,8 @@ class Building extends Component {
       numOfFloors: 10,
       numOfElevators: 5,
       floorsInBuilding: [],
-      elevators: []
+      elevators: [],
+      queue: []
     }
   }
 
@@ -31,38 +32,59 @@ class Building extends Component {
   }
 
   handleChange = (e) => {
-    const name = e.target.name;
+    const { name, value } = e.target;
+    if (value < 1) return;
 
     this.setState(() => {
-      return { [name]: +e.target.value }
+      return { [name]: +value }
     });
   }
 
-  handleClick = (floor) => {
+  handleClick = async (floor) => {
     const { number: floorNumber, condition } = floor;
     if (condition !== 'call') return;
 
-    this.setState(prevState => ({
+    const queueCopy = [...this.state.queue];
+    queueCopy.push(floorNumber);
+
+    await this.setState(prevState => ({
       floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
         { ...floor, condition: 'waiting' }
-        : floor)
+        : floor),
+      queue: [...queueCopy]
     }))
 
-    const elevatorId = this.findAvailableElevator(floorNumber)
+    this.handleRequest();
+  }
+  
+  handleRequest = async () => {  
+    const { queue: stateQueue } = this.state;  
+    if (stateQueue.length === 0) return;
+    const floorNumber = stateQueue[0];
+
+    const elevatorId = this.findAvailableElevator(floorNumber);
     if (elevatorId === -1) return;
+
+    const copyQueue = [...stateQueue];
+    copyQueue.shift();
+    await this.setState(() => ({
+      queue: [...copyQueue]
+    }))
+
     this.moveElevator(elevatorId, floorNumber);
   }
 
   findAvailableElevator = (floorNumber) => {
-    const closestElevator = this.state.elevators.filter(elevator => !elevator.isOccupied).reduce((acc, elevator) => {
-      let newDiff = Math.abs(floorNumber - elevator.inFloor);
-      if (newDiff < acc.diff) {
-        acc.diff = newDiff;
-        acc.elevatorId = elevator.id;
-      }
+    const closestElevator = 
+      this.state.elevators.filter(elevator => !elevator.isOccupied).reduce((acc, elevator) => {
+        let newDiff = Math.abs(floorNumber - elevator.inFloor);
+        if (newDiff < acc.diff) {
+          acc.diff = newDiff;
+          acc.elevatorId = elevator.id;
+        }
 
-      return acc;
-    }, { diff: 1000000000, elevatorId: -1 });
+        return acc;
+      }, { diff: 1000000000, elevatorId: -1 });
 
     return closestElevator.elevatorId;
   }
@@ -111,14 +133,13 @@ class Building extends Component {
           this.setState(prevState => ({
             floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
               { ...floor, condition: 'call' }
-              : floor)
-          }));
-
-          this.setState(prevState => ({
+              : floor),
             elevators: prevState.elevators.map(el => el.id === elevatorId ?
               { ...el, isDoorOpen: false, isOccupied: false }
               : el)
           }));
+
+          this.handleRequest();
         }, 2000);
 
         cancelAnimationFrame(rafId);

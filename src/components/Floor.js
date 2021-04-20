@@ -43,7 +43,7 @@ const Floor = (props) => {
   return (
     <div className="Floor flex align-center justify-center">
       <h5 className="capitalize">{ setFloorNumber() }</h5>
-      <div className="grid-container">{ setCellsAndElevators() }</div>
+      <div className="cells-container flex">{ setCellsAndElevators() }</div>
       <Button handleClick={ handleClick } condition={ props.floor.condition } />
       <audio className="audio-element">
         <source src={ audioFile }></source>
