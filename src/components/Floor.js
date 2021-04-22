@@ -1,9 +1,9 @@
 import React from 'react';
 import audioFile from '../media/elevator_sound.mp3';
-import Elevator from './Elevator';
-import Button from './Button';
+import { Elevator } from './Elevator';
+import { Button } from './Button';
 
-const Floor = (props) => {
+export const Floor = (props) => {
 
   const handleClick = () => {
     props.handleClick(props.floor);
@@ -16,6 +16,7 @@ const Floor = (props) => {
 
   const setFloorNumber = () => {
     const floorNumber = props.floor.number;
+    
     switch (floorNumber) {
       case 0:
         return `ground floor`;
@@ -33,8 +34,8 @@ const Floor = (props) => {
   const setCellsAndElevators = () => {
     return (
       props.elevators.map((elevator, i) => {
-        if (props.floor.number === 0) return <div className="cell" key={i}>{<Elevator elevator={elevator} />}</div>
-        return <div className="cell" key={i}></div>
+        if (props.floor.number === 0) return <div className="cell" key={ i }>{ <Elevator elevator={elevator} /> }</div>
+        return <div className="cell" key={ i }></div>
       }
       )
     )
@@ -48,9 +49,8 @@ const Floor = (props) => {
       <audio className="audio-element">
         <source src={ audioFile }></source>
       </audio>
-      {props.floor.condition === 'arrived' ? playSound() : ''}
+      { props.floor.condition === 'arrived' && playSound() }
     </div>
   )
 }
 
-export default Floor;

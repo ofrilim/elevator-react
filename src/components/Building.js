@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Floor from './Floor';
+import { Floor } from './Floor';
 import { getBuildingData } from '../data/buildingData';
 
-class Building extends Component {
+export class Building extends Component {
   constructor() {
     super();
     this.state = {
@@ -10,7 +10,8 @@ class Building extends Component {
       numOfElevators: 5,
       floorsInBuilding: [],
       elevators: [],
-      queue: []
+      queue: [],
+      rafIds: [],
     }
   }
 
@@ -21,10 +22,17 @@ class Building extends Component {
   updateData = (numOfFloorsInBuilding, numOfElevators) => {
     const { floorsInBuilding, elevators } = getBuildingData(numOfFloorsInBuilding, numOfElevators);
 
-    this.setState({
-      floorsInBuilding,
-      elevators
+    this.state.rafIds.forEach(id => {
+      cancelAnimationFrame(id)
     });
+
+    this.setState(() => {
+      return {
+        floorsInBuilding,
+        elevators,
+        rafIds: Array.from(Array(numOfElevators).keys())
+      }
+    })
   }
 
   handleSubmit = () => {
@@ -47,12 +55,13 @@ class Building extends Component {
     const queueCopy = [...this.state.queue];
     queueCopy.push(floorNumber);
 
-    await this.setState(prevState => ({
+    await this.setState(prevState => {
+      return {
       floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
         { ...floor, condition: 'waiting' }
         : floor),
       queue: [...queueCopy]
-    }))
+    }})
 
     this.handleRequest();
   }
@@ -67,9 +76,10 @@ class Building extends Component {
 
     const copyQueue = [...stateQueue];
     copyQueue.shift();
-    await this.setState(() => ({
+    await this.setState(() => {
+      return {
       queue: [...copyQueue]
-    }))
+    }})
 
     this.moveElevator(elevatorId, floorNumber);
   }
@@ -92,11 +102,12 @@ class Building extends Component {
   moveElevator = (elevatorId, floorNumber) => {
     const elevatorToMove = this.state.elevators.find(elevator => elevator.id === elevatorId);
 
-    this.setState(prevState => ({
+    this.setState(prevState => {
+      return {
       elevators: prevState.elevators.map(elevator => elevator.id === elevatorId ?
         { ...elevator, isOccupied: true }
         : elevator)
-    }))
+    }})
 
     const target = -(floorNumber * 56);
     const startPosition = elevatorToMove.position;
@@ -106,76 +117,94 @@ class Building extends Component {
 
     const step = () => {
       let interval = Date.now() - startTime;
-      currPosition = isMoveUp ? startPosition - (interval / 20) : startPosition + (interval / 20);
+      currPosition = isMoveUp ? startPosition - (interval / 25) : startPosition + (interval / 25);
 
-      this.setState(prevState => ({
+      this.setState(prevState => {
+        return {
         elevators: prevState.elevators.map(elevator => elevator.id === elevatorId ?
           { ...elevator, position: currPosition }
           : elevator)
-      }))
+      }})
 
       const stopCondition = isMoveUp ? currPosition <= target : currPosition >= target;
       if (stopCondition) {
 
-        this.setState(prevState => ({
+        this.setState(prevState => {
+          return {
           elevators: prevState.elevators.map(el => el.id === elevatorId ?
             { ...el, position: target, inFloor: floorNumber, isDoorOpen: true }
             : el)
-        }));
+        }});
 
-        this.setState(prevState => ({
+        this.setState(prevState => {
+          return {
           floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
             { ...floor, condition: 'arrived' }
             : floor)
-        }));
+        }});
 
         setTimeout(() => {
-          this.setState(prevState => ({
+          this.setState(prevState => {
+            return {
             floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
               { ...floor, condition: 'call' }
               : floor),
             elevators: prevState.elevators.map(el => el.id === elevatorId ?
               { ...el, isDoorOpen: false, isOccupied: false }
               : el)
-          }));
+          }});
 
           this.handleRequest();
         }, 2000);
 
-        cancelAnimationFrame(rafId);
         return;
       }
       rafId = requestAnimationFrame(step);
+
+      this.updateRafIdsState(elevatorId, rafId);
     }
     step();
   }
 
+  updateRafIdsState = async (elevatorId, rafId) => {
+
+    let rafIdsCurrState = [...this.state.rafIds];
+    rafIdsCurrState[elevatorId] = rafId;
+    await this.setState(() => {
+      return {
+        rafIds: [...rafIdsCurrState]
+      }
+    })
+  }
+
   render() {
+    const renderFloors = () => {
+      return this.state.floorsInBuilding.map(floor => <Floor
+        key={ floor.number }
+        floor={ floor }
+        elevators={ this.state.elevators }
+        handleClick={ this.handleClick }
+      />
+      )
+    }
+    
     return (
       <>
         <div className="form">
           <label className="capitalize">
             floors:
-            <input type="number" name="numOfFloors" value={this.state.numOfFloors} onChange={this.handleChange} />
+            <input type="number" name="numOfFloors" value={ this.state.numOfFloors } onChange={ this.handleChange } />
           </label>
           <label className="capitalize">
             elevators:
-            <input type="number" name="numOfElevators" value={this.state.numOfElevators} onChange={this.handleChange} />
+            <input type="number" name="numOfElevators" value={ this.state.numOfElevators } onChange={ this.handleChange } />
           </label>
-          <button type="submit" onClick={this.handleSubmit}>Update</button>
+          <button type="submit" onClick={ this.handleSubmit }>Update</button>
         </div>
         <div className="building bold">
-          {this.state.floorsInBuilding.map(floor => <Floor
-            key={floor.number}
-            floor={floor}
-            elevators={this.state.elevators}
-            handleClick={this.handleClick}
-          />
-          )}
+          { renderFloors() }
         </div>
       </>
     )
   }
 }
-
-export default Building;

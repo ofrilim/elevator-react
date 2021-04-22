@@ -1,7 +1,8 @@
 import './styles/global.scss';
-import Building from './components/Building';
+import { Building } from './components/Building';
 
-const App = () => {
+export const App = () => {
+  
   return (
     <div className="App">
       <header className="App-header center bold capitalize">
@@ -11,5 +12,3 @@ const App = () => {
     </div>
   );
 }
-
-export default App;

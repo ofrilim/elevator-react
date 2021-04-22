@@ -7,7 +7,7 @@ const ELEVATOR_COLORS = {
   available: '#000000',
 };
 
-const Elevator = (props) => {
+export const Elevator = (props) => {
   const getConditionColor = () => {
     if (props.elevator.isDoorOpen) return ELEVATOR_COLORS.arrived;
     else {
@@ -22,4 +22,3 @@ const Elevator = (props) => {
   )
 }
 
-export default Elevator;
