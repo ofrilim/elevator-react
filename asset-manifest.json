@@ -1,24 +1,24 @@
 {
   "files": {
     "main.css": "/elevator-react/static/css/main.9477c42e.chunk.css",
-    "main.js": "/elevator-react/static/js/main.77b87189.chunk.js",
-    "main.js.map": "/elevator-react/static/js/main.77b87189.chunk.js.map",
+    "main.js": "/elevator-react/static/js/main.e677b639.chunk.js",
+    "main.js.map": "/elevator-react/static/js/main.e677b639.chunk.js.map",
     "runtime-main.js": "/elevator-react/static/js/runtime-main.c645f3b7.js",
     "runtime-main.js.map": "/elevator-react/static/js/runtime-main.c645f3b7.js.map",
-    "static/js/2.786de64c.chunk.js": "/elevator-react/static/js/2.786de64c.chunk.js",
-    "static/js/2.786de64c.chunk.js.map": "/elevator-react/static/js/2.786de64c.chunk.js.map",
+    "static/js/2.74f5db8d.chunk.js": "/elevator-react/static/js/2.74f5db8d.chunk.js",
+    "static/js/2.74f5db8d.chunk.js.map": "/elevator-react/static/js/2.74f5db8d.chunk.js.map",
     "static/js/3.117994ab.chunk.js": "/elevator-react/static/js/3.117994ab.chunk.js",
     "static/js/3.117994ab.chunk.js.map": "/elevator-react/static/js/3.117994ab.chunk.js.map",
     "index.html": "/elevator-react/index.html",
     "static/css/main.9477c42e.chunk.css.map": "/elevator-react/static/css/main.9477c42e.chunk.css.map",
-    "static/js/2.786de64c.chunk.js.LICENSE.txt": "/elevator-react/static/js/2.786de64c.chunk.js.LICENSE.txt",
+    "static/js/2.74f5db8d.chunk.js.LICENSE.txt": "/elevator-react/static/js/2.74f5db8d.chunk.js.LICENSE.txt",
     "static/media/elevator.6047da45.svg": "/elevator-react/static/media/elevator.6047da45.svg",
     "static/media/elevator_sound.6347182a.mp3": "/elevator-react/static/media/elevator_sound.6347182a.mp3"
   },
   "entrypoints": [
     "static/js/runtime-main.c645f3b7.js",
-    "static/js/2.786de64c.chunk.js",
+    "static/js/2.74f5db8d.chunk.js",
     "static/css/main.9477c42e.chunk.css",
-    "static/js/main.77b87189.chunk.js"
+    "static/js/main.e677b639.chunk.js"
   ]
 }
