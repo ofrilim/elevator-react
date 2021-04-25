@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Floor } from './Floor';
 import { getBuildingData } from '../data/buildingData';
+import { Floor } from './Floor';
+import { Form } from './Form';
 
 export class Building extends Component {
   constructor() {
@@ -30,7 +31,8 @@ export class Building extends Component {
       return {
         floorsInBuilding,
         elevators,
-        rafIds: Array.from(Array(numOfElevators).keys())
+        queue: [],
+        rafIds: Array.from(Array(numOfElevators).keys()),
       }
     })
   }
@@ -39,34 +41,30 @@ export class Building extends Component {
     this.updateData(this.state.numOfFloors, this.state.numOfElevators);
   }
 
-  handleChange = (e) => {
-    const { name, value } = e.target;
-    if (value < 1) return;
-
+  handleChange = (name, value) => {
+    
     this.setState(() => {
       return { [name]: +value }
     });
   }
 
-  handleClick = async (floor) => {
+  handleClick = (floor) => {
     const { number: floorNumber, condition } = floor;
     if (condition !== 'call') return;
 
-    const queueCopy = [...this.state.queue];
-    queueCopy.push(floorNumber);
-
-    await this.setState(prevState => {
+    this.setState(prevState => {
       return {
       floorsInBuilding: prevState.floorsInBuilding.map(floor => floor.number === floorNumber ?
         { ...floor, condition: 'waiting' }
         : floor),
-      queue: [...queueCopy]
-    }})
+      queue: [...prevState.queue, floorNumber]
+    }}, () => {
+      this.handleRequest();
+    })
 
-    this.handleRequest();
   }
   
-  handleRequest = async () => {  
+  handleRequest = () => {  
     const { queue: stateQueue } = this.state;  
     if (stateQueue.length === 0) return;
     const floorNumber = stateQueue[0];
@@ -76,12 +74,13 @@ export class Building extends Component {
 
     const copyQueue = [...stateQueue];
     copyQueue.shift();
-    await this.setState(() => {
-      return {
-      queue: [...copyQueue]
-    }})
 
-    this.moveElevator(elevatorId, floorNumber);
+    this.setState(() => {
+      return {
+      queue: copyQueue
+    }}, () => {
+      this.moveElevator(elevatorId, floorNumber);
+    })
   }
 
   findAvailableElevator = (floorNumber) => {
@@ -166,13 +165,13 @@ export class Building extends Component {
     step();
   }
 
-  updateRafIdsState = async (elevatorId, rafId) => {
+  updateRafIdsState = (elevatorId, rafId) => {
 
     let rafIdsCurrState = [...this.state.rafIds];
     rafIdsCurrState[elevatorId] = rafId;
-    await this.setState(() => {
+    this.setState(() => {
       return {
-        rafIds: [...rafIdsCurrState]
+        rafIds: rafIdsCurrState
       }
     })
   }
@@ -190,17 +189,11 @@ export class Building extends Component {
     
     return (
       <>
-        <div className="form">
-          <label className="capitalize">
-            floors:
-            <input type="number" name="numOfFloors" value={ this.state.numOfFloors } onChange={ this.handleChange } />
-          </label>
-          <label className="capitalize">
-            elevators:
-            <input type="number" name="numOfElevators" value={ this.state.numOfElevators } onChange={ this.handleChange } />
-          </label>
-          <button type="submit" onClick={ this.handleSubmit }>Update</button>
-        </div>
+        <Form 
+          buildingState={ this.state }
+          handleChange={ this.handleChange } 
+          handleSubmit={ this.handleSubmit }
+        />
         <div className="building bold">
           { renderFloors() }
         </div>
